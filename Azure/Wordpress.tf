@@ -54,7 +54,7 @@ resource "azurerm_mysql_server" "database-server" {
   administrator_login          = "deradmin"
   administrator_login_password = "J6USO4lyvnzV96mT"
 
-  sku_name   = "B_Gen5_2"
+  sku_name   = "GP_Gen5_2"
   storage_mb = 5120
   version    = "8.0"
 
@@ -62,7 +62,7 @@ resource "azurerm_mysql_server" "database-server" {
   backup_retention_days             = 7
   geo_redundant_backup_enabled      = false
   infrastructure_encryption_enabled = false
-  public_network_access_enabled     = true
+  public_network_access_enabled     = false
   ssl_enforcement_enabled           = true
 }
 
