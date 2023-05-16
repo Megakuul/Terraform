@@ -17,13 +17,13 @@ provider "azurerm" {
 
 # Create a resource group
 resource "azurerm_resource_group" "rg" {
-  name     = "rg-wordpress-prod-${var.region}-001"
+  name     = "rg-wordpress-prod-${var.region}-${var.inf_version}"
   location = var.region
 }
 
 # Create a vnet
 resource "azurerm_virtual_network" "vnet" {
-  name                = "vnet-wordpress-prod-${var.region}-001"
+  name                = "vnet-wordpress-prod-${var.region}-${var.inf_version}"
   address_space       = ["10.0.0.0/16"]
   location            = var.region
   resource_group_name = azurerm_resource_group.rg.name
@@ -31,7 +31,7 @@ resource "azurerm_virtual_network" "vnet" {
 
 # Create the first subnet for the database
 resource "azurerm_subnet" "vsub1" {
-  name                 = "vsub-wordpress-prod-${var.region}-001"
+  name                 = "vsub-wordpress-db-prod-${var.region}-${var.inf_version}"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.1.0/24"]
@@ -49,7 +49,7 @@ resource "azurerm_subnet" "vsub1" {
 
 # Create the second subnet for the app service
 resource "azurerm_subnet" "vsub2" {
-  name                 = "vsub-wordpress-prod-${var.region}-002"
+  name                 = "vsub-wordpress-app-prod-${var.region}-${var.inf_version}"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.2.0/24"]
@@ -70,7 +70,7 @@ resource "azurerm_app_service_virtual_network_swift_connection" "vsub2-integrati
 
 # Create a MySQL Server
 resource "azurerm_mysql_flexible_server" "database-server" {
-  name                    = "db-srv-wordpress-prod-${var.region}-001"
+  name                    = "db-srv-wordpress-prod-${var.region}-${var.inf_version}"
   location                = var.region
   resource_group_name     = azurerm_resource_group.rg.name
 
@@ -94,7 +94,7 @@ resource "azurerm_mysql_flexible_server_configuration" "require_secure_transport
 
 # Create a MySQL Database
 resource "azurerm_mysql_flexible_database" "database" {
-  name                = "db-wordpress-prod-${var.region}-001"
+  name                = "db-wordpress-prod-${var.region}-${var.inf_version}"
   resource_group_name = azurerm_resource_group.rg.name
   server_name         = azurerm_mysql_flexible_server.database-server.name
   charset             = "utf8"
@@ -103,7 +103,7 @@ resource "azurerm_mysql_flexible_database" "database" {
 
 # Create an App Service Plan
 resource "azurerm_app_service_plan" "app-plan" {
-  name                = "app-plan-wordpress-prod-${var.region}-001"
+  name                = "app-plan-wordpress-prod-${var.region}-${var.inf_version}"
   location            = var.region
   resource_group_name = azurerm_resource_group.rg.name
   kind                = "Linux"
@@ -116,7 +116,7 @@ resource "azurerm_app_service_plan" "app-plan" {
 
 # Create an App Service
 resource "azurerm_app_service" "app" {
-  name                = "app-wordpress-prod-${var.region}-001"
+  name                = "app-wordpress-prod-${var.region}-${var.inf_version}"
   location            = var.region
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.app-plan.id
